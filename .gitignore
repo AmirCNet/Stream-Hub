@@ -1,0 +1,38 @@
+# Build results
+bin/
+obj/
+Debug/
+Release/
+
+# VS / VSCode folders
+.vscode/
+.vs/
+
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Rider
+.idea/
+
+# Mac and Windows
+.DS_Store
+Thumbs.db
+
+# Log files
+*.log
+
+# NuGet packages
+*.nupkg
+*.snupkg
+packages/
+project.lock.json
+
+# Auto-generated files
+*.tmp
+*.bak
+*.cache
+*.pidb
+*.svclog

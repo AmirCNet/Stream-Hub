@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using StreamHub.Models;
 
-namespace StreamHub.Data;
+namespace StreamHub.Context;
 
 public class StreamHubDbContext : DbContext
 {

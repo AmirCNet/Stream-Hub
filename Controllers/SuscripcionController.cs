@@ -3,6 +3,7 @@ namespace StreamHub.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using StreamHub.Models;
 using StreamHub.Interfaces;
+using StreamHub.Dtos;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -18,7 +19,8 @@ public class SuscripcionController : ControllerBase
     public IActionResult GetSuscripciones()
     {
         var suscripciones = _suscripcionService.GetAll();
-        return Ok(suscripciones);
+        var dtos = suscripciones.Select(MapToDto).ToList();
+        return Ok(dtos);
     }
 
     [HttpGet("{id}")]
@@ -28,27 +30,39 @@ public class SuscripcionController : ControllerBase
         if (suscripcion == null)
             return NotFound($"No se encontró la suscripción con ID {id}");
 
-        return Ok(suscripcion);
+        return Ok(MapToDto(suscripcion));
     }
 
     [HttpPost]
-    public IActionResult CrearSuscripcion([FromBody] Suscripcion suscripcion)
+    public IActionResult CrearSuscripcion([FromBody] SuscripcionCreateDto dto)
     {
-        var nuevaSuscripcion = _suscripcionService.Add(suscripcion);
-        return CreatedAtAction(nameof(GetSuscripcion), new { id = nuevaSuscripcion.Id }, nuevaSuscripcion);
+        var model = new Suscripcion
+        {
+            IdUsuario = dto.IdUsuario,
+            TipoSuscripcion = dto.TipoSuscripcion,
+            FechaInicio = DateTime.Now,
+            FechaFin = dto.FechaFin ?? DateTime.Now.AddMonths(1),
+            Estado = dto.Estado ?? "Activa"
+        };
+        var nuevaSuscripcion = _suscripcionService.Add(model);
+        return CreatedAtAction(nameof(GetSuscripcion), new { id = nuevaSuscripcion.Id }, MapToDto(nuevaSuscripcion));
     }
 
     [HttpPut("{id}")]
-    public IActionResult ActualizarSuscripcion(int id, [FromBody] Suscripcion suscripcion)
+    public IActionResult ActualizarSuscripcion(int id, [FromBody] SuscripcionCreateDto dto)
     {
-        var suscripcionExistente = _suscripcionService.GetById(id);
-        if (suscripcionExistente == null)
+        var model = new Suscripcion
+        {
+            IdUsuario = dto.IdUsuario,
+            TipoSuscripcion = dto.TipoSuscripcion,
+            FechaFin = dto.FechaFin ?? DateTime.Now.AddMonths(1),
+            Estado = dto.Estado
+        };
+        var updated = _suscripcionService.Update(id, model);
+        if (updated == null)
             return NotFound($"No se encontró la suscripción con ID {id}");
 
-        // Aquí se debería actualizar la suscripción usando el servicio correspondiente.
-        // Ejemplo (si existiera): _suscripcionService.Update(id, suscripcion);
-
-        return NoContent();
+        return Ok(MapToDto(updated));
     }
 
     [HttpDelete("{id}")]
@@ -60,4 +74,14 @@ public class SuscripcionController : ControllerBase
 
         return NoContent();
     }
+
+    private static SuscripcionDto MapToDto(Suscripcion s) => new SuscripcionDto
+    {
+        Id = s.Id,
+        IdUsuario = s.IdUsuario,
+        TipoSuscripcion = s.TipoSuscripcion,
+        FechaInicio = s.FechaInicio,
+        FechaFin = s.FechaFin,
+        Estado = s.Estado
+    };
 }

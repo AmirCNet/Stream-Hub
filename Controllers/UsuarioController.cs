@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using StreamHub.Models;
 using StreamHub.Interfaces;
+using StreamHub.Dtos;
 
 namespace StreamHub.Controllers
 {
@@ -16,36 +17,50 @@ namespace StreamHub.Controllers
         }
 
         [HttpGet]
-        public ActionResult<List<Usuario>> GetAll()
+        public ActionResult<List<UsuarioDto>> GetAll()
         {
-            return Ok(_usuarioService.GetAll());
+            var usuarios = _usuarioService.GetAll();
+            var usuariosDto = usuarios.Select(MapToUsuarioDto).ToList();
+            return Ok(usuariosDto);
         }
 
         [HttpGet("{id}")]
-        public ActionResult<Usuario> GetById(int id)
+        public ActionResult<UsuarioDto> GetById(int id)
         {
             var user = _usuarioService.GetById(id);
             if (user == null)
                 return NotFound($"No se encontró el usuario con ID {id}");
 
-            return Ok(user);
+            return Ok(MapToUsuarioDto(user));
         }
 
         [HttpPost]
-        public ActionResult<Usuario> Create([FromBody] Usuario usuario)
+        public ActionResult<UsuarioDto> Create([FromBody] UsuarioCreateDto dto)
         {
+            var usuario = new Usuario
+            {
+                Nombre = dto.Nombre,
+                Email = dto.Email,
+                Contraseña = dto.Contraseña
+            };
             var created = _usuarioService.Add(usuario);
-            return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
+            return CreatedAtAction(nameof(GetById), new { id = created.Id }, MapToUsuarioDto(created));
         }
 
         [HttpPut("{id}")]
-        public ActionResult<Usuario> Update(int id, [FromBody] Usuario usuario)
+        public ActionResult<UsuarioDto> Update(int id, [FromBody] UsuarioCreateDto dto)
         {
-            var updated = _usuarioService.Update(id, usuario);
+            var model = new Usuario
+            {
+                Nombre = dto.Nombre,
+                Email = dto.Email,
+                Contraseña = dto.Contraseña
+            };
+            var updated = _usuarioService.Update(id, model);
             if (updated == null)
                 return NotFound($"No se encontró el usuario con ID {id}");
 
-            return Ok(updated);
+            return Ok(MapToUsuarioDto(updated));
         }
 
         [HttpDelete("{id}")]
@@ -57,5 +72,13 @@ namespace StreamHub.Controllers
 
             return NoContent();
         }
+
+        private static UsuarioDto MapToUsuarioDto(Usuario u) => new UsuarioDto
+        {
+            Id = u.Id,
+            Nombre = u.Nombre ?? string.Empty,
+            Email = u.Email ?? string.Empty,
+            FechaRegistro = u.FechaRegistro
+        };
     }
 }

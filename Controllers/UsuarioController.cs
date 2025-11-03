@@ -1,44 +1,61 @@
 using Microsoft.AspNetCore.Mvc;
 using StreamHub.Models;
+using StreamHub.Interfaces;
 
-namespace StreamHub.Controllers;
-
-[ApiController]
-[Route("api/[controller]")]
-public class UsuarioController : ControllerBase
+namespace StreamHub.Controllers
 {
-    [HttpGet]
-    public IActionResult GetUsuarios()
+    [ApiController]
+    [Route("api/[controller]")]
+    public class UsuarioController : ControllerBase
     {
-        // Aquí iría la lógica para obtener la lista de usuarios
-        return Ok();
-    }
+        private readonly IUsuarioService _usuarioService;
 
-    [HttpGet("{id}")]
-    public IActionResult GetUsuario(int id)
-    {
-        // Aquí iría la lógica para obtener un usuario por su ID
-        return Ok();
-    }
+        public UsuarioController(IUsuarioService usuarioService)
+        {
+            _usuarioService = usuarioService;
+        }
 
-    [HttpPost]
-    public IActionResult CrearUsuario([FromBody] Usuario usuario)
-    {
-        // Aquí iría la lógica para crear un nuevo usuario
-        return CreatedAtAction(nameof(GetUsuario), new { id = usuario.Id }, usuario);
-    }
+        [HttpGet]
+        public ActionResult<List<Usuario>> GetAll()
+        {
+            return Ok(_usuarioService.GetAll());
+        }
 
-    [HttpPut("{id}")]
-    public IActionResult ActualizarUsuario(int id, [FromBody] Usuario usuario)
-    {
-        // Aquí iría la lógica para actualizar un usuario existente
-        return NoContent();
-    }
+        [HttpGet("{id}")]
+        public ActionResult<Usuario> GetById(int id)
+        {
+            var user = _usuarioService.GetById(id);
+            if (user == null)
+                return NotFound($"No se encontró el usuario con ID {id}");
 
-    [HttpDelete("{id}")]
-    public IActionResult EliminarUsuario(int id)
-    {
-        // Aquí iría la lógica para eliminar un usuario
-        return NoContent();
+            return Ok(user);
+        }
+
+        [HttpPost]
+        public ActionResult<Usuario> Create([FromBody] Usuario usuario)
+        {
+            var created = _usuarioService.Add(usuario);
+            return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
+        }
+
+        [HttpPut("{id}")]
+        public ActionResult<Usuario> Update(int id, [FromBody] Usuario usuario)
+        {
+            var updated = _usuarioService.Update(id, usuario);
+            if (updated == null)
+                return NotFound($"No se encontró el usuario con ID {id}");
+
+            return Ok(updated);
+        }
+
+        [HttpDelete("{id}")]
+        public ActionResult Delete(int id)
+        {
+            var deleted = _usuarioService.Delete(id);
+            if (!deleted)
+                return NotFound($"No se encontró el usuario con ID {id}");
+
+            return NoContent();
+        }
     }
 }

@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace StreamHub.Dtos;
 
-public class ContentDto
+public class ContenidoDto
 {
     public int? Id { get; set; }
     

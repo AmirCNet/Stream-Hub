@@ -38,7 +38,9 @@ namespace StreamHub.Services
             existing.Titulo = contenido.Titulo;
             existing.Descripcion = contenido.Descripcion;
             existing.Genero = contenido.Genero;
-            //existing.Duracion = contenido.Duracion;
+            existing.Tipo = contenido.Tipo;
+            existing.ClasificacionEdad = contenido.ClasificacionEdad;
+            existing.Url = contenido.Url;
             _context.SaveChanges();
 
             return existing;

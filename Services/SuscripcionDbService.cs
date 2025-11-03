@@ -37,7 +37,14 @@ namespace StreamHub.Services
             if (existing == null) return null;
 
             existing.TipoSuscripcion = suscripcion.TipoSuscripcion;
-            //existing.Precio = suscripcion.Precio;??? --Consultar con pasarela de pagos
+            if (suscripcion.FechaFin != default)
+            {
+                existing.FechaFin = suscripcion.FechaFin;
+            }
+            if (!string.IsNullOrWhiteSpace(suscripcion.Estado))
+            {
+                existing.Estado = suscripcion.Estado;
+            }
             _context.SaveChanges();
 
             return existing;

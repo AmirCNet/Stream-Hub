@@ -7,6 +7,8 @@ using StreamHub.Controllers;
 using StreamHub.Dtos;
 using StreamHub.Models;
 using StreamHub.Context;
+using StreamHub.Services;
+using StreamHub.Interfaces;
 
 using Microsoft.OpenApi.Models;
 
@@ -38,6 +40,10 @@ builder.Services.AddSwaggerGen(c =>
         Description = "API base para StreamHub"
     });
 });
+
+builder.Services.AddScoped<IUsuarioService, UsuarioDbService>();
+builder.Services.AddScoped<ISuscripcionService, SuscripcionDbService>();
+builder.Services.AddScoped<IContenidoService, ContenidoDbService>();
 
 var app = builder.Build();
 

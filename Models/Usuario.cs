@@ -7,4 +7,5 @@ public class Usuario
     public string? Email { get; set; }
     public string? Contraseña { get; set; }
     public DateTime FechaRegistro { get; set; }
+    public Suscripcion? Subscription { get; set; }
 }

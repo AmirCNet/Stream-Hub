@@ -1,11 +1,13 @@
 namespace StreamHub.Controllers;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using StreamHub.Models;
 using StreamHub.Interfaces;
 using StreamHub.Dtos;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]  
 
 public class ContenidoController : ControllerBase
 {
@@ -33,6 +35,7 @@ public class ContenidoController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = "Admin")]  
     public IActionResult CrearContenido([FromBody] ContenidoDto dto)
     {
         var model = new Contenido
@@ -49,6 +52,7 @@ public class ContenidoController : ControllerBase
     }
 
     [HttpPut("{id}")]
+    [Authorize(Roles = "Admin")] 
     public IActionResult ActualizarContenido(int id, [FromBody] ContenidoDto dto)
     {
         var model = new Contenido
@@ -66,6 +70,7 @@ public class ContenidoController : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [Authorize(Roles = "Admin")]  
     public IActionResult EliminarContenido(int id)
     {
         var eliminado = _contenidoService.Delete(id);

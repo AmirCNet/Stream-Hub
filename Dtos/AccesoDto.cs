@@ -1,6 +1,5 @@
 namespace StreamHub.Dtos;
 
-// DTO para la respuesta del endpoint GET /content/{id}/play
 public class AccessResultDto
 {
     public string Message { get; set; } = string.Empty;

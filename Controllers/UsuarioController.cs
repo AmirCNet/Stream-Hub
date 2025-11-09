@@ -43,6 +43,7 @@ namespace StreamHub.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Roles = "Admin")]
         public ActionResult<UsuarioDto> GetById(int id)
         {
             var user = _usuarioService.GetById(id);
@@ -53,6 +54,7 @@ namespace StreamHub.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public ActionResult<UsuarioDto> Create([FromBody] UsuarioCreateDto dto)
         {
             var usuario = new Usuario
@@ -67,6 +69,7 @@ namespace StreamHub.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
         public ActionResult<UsuarioDto> Update(int id, [FromBody] UsuarioCreateDto dto)
         {
             var model = new Usuario

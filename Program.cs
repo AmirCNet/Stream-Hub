@@ -63,14 +63,15 @@ builder.Services.AddSwaggerGen(c =>
     });
 
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-    {
-        Name = "Authorization",
-        Type = SecuritySchemeType.ApiKey,
-        Scheme = "Bearer",
-        BearerFormat = "JWT",
-        In = ParameterLocation.Header,
-        Description = "JWT Authorization header usando el esquema Bearer."
-    });
+{
+    Name = "Authorization",
+    Type = SecuritySchemeType.Http, 
+    Scheme = "Bearer",
+    BearerFormat = "JWT",
+    In = ParameterLocation.Header,
+    Description = "Ingrese el token JWT comenzando con 'Bearer '"
+});
+
 
     c.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
@@ -111,5 +112,9 @@ if (app.Environment.IsDevelopment())
 app.UseAuthorization();
 
 app.MapControllers();
+
+var swaggerUrl = "https://localhost:5001/swagger/index.html";
+Console.WriteLine($"\nSwagger UI disponible en: {swaggerUrl}\n");
+
 
 app.Run();

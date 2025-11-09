@@ -3,6 +3,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 using StreamHub.Controllers;
 using StreamHub.Dtos;
+//--------
 using StreamHub.Models;
 using StreamHub.Context;
 using StreamHub.Services;
@@ -11,6 +12,9 @@ using StreamHub.Interfaces;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.DependencyInjection;
+
+
 using Microsoft.EntityFrameworkCore;
 using DotNetEnv;
 using System.Text;
@@ -20,6 +24,8 @@ Env.Load();
 var builder = WebApplication.CreateBuilder(args);
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+// Config JWT y Auth se configuran más abajo
 
 builder.Services.AddDbContext<StreamHubDbContext>(options =>
     options.UseSqlServer(connectionString));
@@ -92,6 +98,38 @@ builder.Services.AddSwaggerGen(c =>
 builder.Services.AddScoped<IUsuarioService, UsuarioDbService>();
 builder.Services.AddScoped<ISuscripcionService, SuscripcionDbService>();
 builder.Services.AddScoped<IContenidoService, ContenidoDbService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
+
+// Bind opciones de JWT desde configuración
+builder.Services.Configure<AuthOptions>(builder.Configuration.GetSection("Jwt"));
+
+// Configurar autenticación JWT Bearer
+var jwtSection = builder.Configuration.GetSection("Jwt");
+var jwtKey = jwtSection.GetValue<string>("Key");
+var jwtIssuer = jwtSection.GetValue<string>("Issuer");
+var jwtAudience = jwtSection.GetValue<string>("Audience");
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateIssuerSigningKey = true,
+        ValidateLifetime = true,
+        ValidIssuer = jwtIssuer,
+        ValidAudience = jwtAudience,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey ?? string.Empty)),
+        ClockSkew = TimeSpan.Zero
+    };
+});
+
+builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
@@ -109,6 +147,7 @@ if (app.Environment.IsDevelopment())
     });
 }
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

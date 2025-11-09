@@ -4,7 +4,6 @@ using StreamHub.Models;
 using StreamHub.Interfaces;
 using StreamHub.Dtos;
 using StreamHub.Services;
-//using Microsoft.AspNetCore.Authorization;
 
 namespace StreamHub.Controllers
 {
@@ -32,13 +31,6 @@ namespace StreamHub.Controllers
 
             var token = _tokenService.GenerateToken(usuario);
             return Ok(new { token });
-        }
-        private readonly ISuscripcionService _suscripcionService;
-
-        public UsuarioController(IUsuarioService usuarioService, ISuscripcionService suscripcionService)
-        {
-            _usuarioService = usuarioService;
-            _suscripcionService = suscripcionService;
         }
 
         [HttpGet]
@@ -104,40 +96,12 @@ namespace StreamHub.Controllers
             return NoContent();
         }
 
-        // Opción B: Upsert idempotente de suscripción por usuario
-        [HttpPut("{usuarioId}/suscripcion")]
-        public ActionResult<SuscripcionDto> UpsertSuscripcion(int usuarioId, [FromBody] SuscripcionCreateDto dto)
-        {
-            var user = _usuarioService.GetById(usuarioId);
-            if (user == null)
-                return NotFound($"No se encontró el usuario con ID {usuarioId}");
-
-            var data = new Suscripcion
-            {
-                Plan = dto.Plan,
-                FechaExpiracion = dto.FechaExpiracion,
-                Estado = dto.Estado
-            };
-
-            var result = _suscripcionService.UpsertForUser(usuarioId, data);
-            var resp = new SuscripcionDto
-            {
-                Id = result.Id,
-                UsuarioId = result.UsuarioId,
-                Plan = result.Plan,
-                FechaInicio = result.FechaInicio,
-                FechaExpiracion = result.FechaExpiracion,
-                Estado = result.Estado
-            };
-            return Ok(resp);
-        }
-
         private static UsuarioDto MapToUsuarioDto(Usuario u) => new UsuarioDto
         {
             Id = u.Id,
             Nombre = u.Nombre ?? string.Empty,
             Email = u.Email ?? string.Empty,
             FechaRegistro = u.FechaRegistro
-        };
-    }
+        };
+    }
 }

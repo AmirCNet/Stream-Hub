@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using StreamHub.Context;
 
@@ -11,9 +12,11 @@ using StreamHub.Context;
 namespace StreamHub.Migrations
 {
     [DbContext(typeof(StreamHubDbContext))]
-    partial class StreamHubDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251109021847_AgregarColumnaRolAUsuario")]
+    partial class AgregarColumnaRolAUsuario
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -86,21 +89,21 @@ namespace StreamHub.Migrations
                     b.Property<string>("Estado")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("FechaExpiracion")
+                    b.Property<DateTime>("FechaFin")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime>("FechaInicio")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Plan")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("UsuarioId")
+                    b.Property<int>("IdUsuario")
                         .HasColumnType("int");
+
+                    b.Property<string>("TipoSuscripcion")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UsuarioId")
+                    b.HasIndex("IdUsuario")
                         .IsUnique();
 
                     b.ToTable("Subscriptions");
@@ -136,13 +139,13 @@ namespace StreamHub.Migrations
 
             modelBuilder.Entity("StreamHub.Models.Suscripcion", b =>
                 {
-                    b.HasOne("StreamHub.Models.Usuario", "Usuario")
+                    b.HasOne("StreamHub.Models.Usuario", "User")
                         .WithOne()
-                        .HasForeignKey("StreamHub.Models.Suscripcion", "UsuarioId")
+                        .HasForeignKey("StreamHub.Models.Suscripcion", "IdUsuario")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Usuario");
+                    b.Navigation("User");
                 });
 #pragma warning restore 612, 618
         }

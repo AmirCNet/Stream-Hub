@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using StreamHub.Models;
 using StreamHub.Interfaces;
 using StreamHub.Dtos;
+using StreamHub.Services;
 using Microsoft.AspNetCore.Authorization;
 
 namespace StreamHub.Controllers
@@ -11,6 +13,25 @@ namespace StreamHub.Controllers
     public class UsuarioController : ControllerBase
     {
         private readonly IUsuarioService _usuarioService;
+        private readonly ITokenService _tokenService;
+
+        public UsuarioController(IUsuarioService usuarioService, ITokenService tokenService)
+        {
+            _usuarioService = usuarioService;
+            _tokenService = tokenService;
+        }
+
+        [HttpPost("login")]
+        public ActionResult<string> Login([FromBody] LoginDto loginDto)
+        {
+            var usuario = _usuarioService.GetAll()
+                .FirstOrDefault(u => u.Email == loginDto.Email && u.Contraseña == loginDto.Contraseña);
+
+            if (usuario == null)
+                return Unauthorized("Credenciales inválidas");
+
+            var token = _tokenService.GenerateToken(usuario);
+            return Ok(new { token });
         private readonly ISuscripcionService _suscripcionService;
 
         public UsuarioController(IUsuarioService usuarioService, ISuscripcionService suscripcionService)
@@ -20,6 +41,7 @@ namespace StreamHub.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public ActionResult<List<UsuarioDto>> GetAll()
         {
             var usuarios = _usuarioService.GetAll();
@@ -28,6 +50,7 @@ namespace StreamHub.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Roles = "Admin")]
         public ActionResult<UsuarioDto> GetById(int id)
         {
             var user = _usuarioService.GetById(id);
@@ -38,19 +61,22 @@ namespace StreamHub.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public ActionResult<UsuarioDto> Create([FromBody] UsuarioCreateDto dto)
         {
             var usuario = new Usuario
             {
                 Nombre = dto.Nombre,
                 Email = dto.Email,
-                Contraseña = dto.Contraseña
+                Contraseña = dto.Contraseña,
+                Rol = dto.Rol
             };
             var created = _usuarioService.Add(usuario);
             return CreatedAtAction(nameof(GetById), new { id = created.Id }, MapToUsuarioDto(created));
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
         public ActionResult<UsuarioDto> Update(int id, [FromBody] UsuarioCreateDto dto)
         {
             var model = new Usuario
@@ -67,6 +93,7 @@ namespace StreamHub.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public ActionResult Delete(int id)
         {
             var deleted = _usuarioService.Delete(id);

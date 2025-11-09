@@ -8,4 +8,5 @@ public class Usuario
     public string? Contraseña { get; set; }
     public DateTime FechaRegistro { get; set; }
     public string? Rol { get; set; }
+    public Suscripcion? Subscription { get; set; }
 }

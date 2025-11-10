@@ -107,7 +107,7 @@ public class ContenidoController : ControllerBase
         if (suscripcion == null)
             return Forbid("El usuario no tiene una suscripción activa.");
 
-        if (suscripcion.Estado != "Activa")
+        if (suscripcion.Estado != "Activo")
             return StatusCode(403, new { mensaje = $"Acceso denegado. Estado: {suscripcion.Estado}" });
 
         return Ok(new

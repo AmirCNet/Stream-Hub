@@ -10,7 +10,7 @@ namespace StreamHub.Services
     public class PagoService
     {
         private readonly HttpClient _httpClient;
-        private readonly string _baseUrl = "https://api.paylink.com"; // Base URL de la pasarela
+        private readonly string _baseUrl = "http://localhost:5105"; // Base URL de la pasarela
 
         public PagoService(HttpClient httpClient)
         {

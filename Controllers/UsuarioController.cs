@@ -54,7 +54,7 @@ namespace StreamHub.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]  Chequear
         public ActionResult<UsuarioDto> Create([FromBody] UsuarioCreateDto dto)
         {
             var usuario = new Usuario

@@ -10,14 +10,14 @@ namespace StreamHub.Controllers
     public class PagosController : ControllerBase
     {
         private readonly PagoService _pagoService;
-        private readonly string _apiKey = "SIMULATED_API_KEY_ABC123"; // En producción, cargala desde DB o .env
+        private readonly string _apiKey = "ABC123SECRET987XYZ456";
 
         public PagosController(PagoService pagoService)
         {
             _pagoService = pagoService;
         }
 
-        // POST /api/payments → crea un pago
+        // POST /api/pagos → crea un pago
         [HttpPost]
         public async Task<IActionResult> CrearPago([FromBody] PagoDto dto)
         {
@@ -50,7 +50,6 @@ namespace StreamHub.Controllers
         [HttpGet("/api/facturas/{facuraId}")]
         public IActionResult ObtenerFactura(string facturaId, [FromQuery] int businessId)
         {
-            // Simulación: normalmente consultarías en tu DB
             var factura = new
             {
                 FacturaId = facturaId,
@@ -59,7 +58,7 @@ namespace StreamHub.Controllers
                 Monto = 1999.99m,
                 Estado = "Pendiente",
                 Concepto = "Suscripción Premium - Octubre"
-            };
+            };//EJEMPLO
             return Ok(factura);
         }
     }

@@ -12,6 +12,8 @@ namespace StreamHub.Interfaces
         Suscripcion Add(Suscripcion suscripcion);
         Suscripcion? Update(int id, Suscripcion suscripcion);
         Suscripcion UpsertForUser(int userId, Suscripcion data);
+        Suscripcion? GetByUsuarioId(int usuarioId);
+
         bool Delete(int id);
     }
 }

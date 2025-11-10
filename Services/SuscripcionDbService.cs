@@ -28,6 +28,11 @@ namespace StreamHub.Services
             return _context.Subscriptions.FirstOrDefault(s => s.UsuarioId == userId);
         }
 
+        public Suscripcion? GetByUsuarioId(int usuarioId)
+        {
+        return _context.Subscriptions.FirstOrDefault(s => s.UsuarioId == usuarioId);
+        }
+
         public Suscripcion Add(Suscripcion suscripcion)
         {
             suscripcion.FechaInicio = DateTime.Now;

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using StreamHub.Models;
 using StreamHub.Interfaces;
 using StreamHub.Dtos;
+using System.Security.Claims;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -87,5 +88,33 @@ public class ContenidoController : ControllerBase
         Genero = c.Genero ?? string.Empty,
         ClasificacionEdad = c.ClasificacionEdad ?? string.Empty,
         Url = c.Url ?? string.Empty
-    };
+    };
+
+    [HttpGet("{id}/play")]
+    public IActionResult ReproducirContenido(int id, [FromServices] ISuscripcionService _suscripcionService)
+    {
+        var contenido = _contenidoService.GetById(id);
+        if (contenido == null)
+            return NotFound(new { mensaje = $"No se encontró el contenido con ID {id}" });
+
+        var usuarioIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
+        if (usuarioIdClaim == null)
+            return Unauthorized(new { mensaje = "No se pudo identificar al usuario." });
+
+        int usuarioId = int.Parse(usuarioIdClaim.Value);
+
+        var suscripcion = _suscripcionService.GetByUsuarioId(usuarioId);
+        if (suscripcion == null)
+            return Forbid("El usuario no tiene una suscripción activa.");
+
+        if (suscripcion.Estado != "Activa")
+            return StatusCode(403, new { mensaje = $"Acceso denegado. Estado: {suscripcion.Estado}" });
+
+        return Ok(new
+        {
+            mensaje = "Acceso concedido.",
+            titulo = contenido.Titulo,
+            url = contenido.Url
+        });
+    }
 }

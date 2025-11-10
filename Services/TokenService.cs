@@ -67,6 +67,6 @@ namespace StreamHub.Services
             };
 
             return tokenHandler.ValidateToken(token, tokenValidationParameters, out _);
-        }
-    }
+        }
+    }
 }

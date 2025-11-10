@@ -87,5 +87,5 @@ public class ContenidoController : ControllerBase
         Genero = c.Genero ?? string.Empty,
         ClasificacionEdad = c.ClasificacionEdad ?? string.Empty,
         Url = c.Url ?? string.Empty
-    };
+    };
 }

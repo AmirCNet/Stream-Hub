@@ -1,16 +1,11 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi;
-using StreamHub.Controllers;
-using StreamHub.Dtos;
 using StreamHub.Models;
 using StreamHub.Context;
 using StreamHub.Services;
 using StreamHub.Interfaces;
 
 using Microsoft.OpenApi.Models;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
 using DotNetEnv;
 using System.Text;
@@ -20,6 +15,8 @@ Env.Load();
 var builder = WebApplication.CreateBuilder(args);
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+// Config JWT y Auth se configuran más abajo
 
 builder.Services.AddDbContext<StreamHubDbContext>(options =>
     options.UseSqlServer(connectionString));
@@ -92,6 +89,8 @@ builder.Services.AddSwaggerGen(c =>
 builder.Services.AddScoped<IUsuarioService, UsuarioDbService>();
 builder.Services.AddScoped<ISuscripcionService, SuscripcionDbService>();
 builder.Services.AddScoped<IContenidoService, ContenidoDbService>();
+builder.Services.AddHttpClient<PagoService>();
+
 
 var app = builder.Build();
 
@@ -109,6 +108,7 @@ if (app.Environment.IsDevelopment())
     });
 }
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

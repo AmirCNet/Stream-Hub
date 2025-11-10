@@ -102,6 +102,6 @@ namespace StreamHub.Controllers
             Nombre = u.Nombre ?? string.Empty,
             Email = u.Email ?? string.Empty,
             FechaRegistro = u.FechaRegistro
-        };
-    }
+        };
+    }
 }

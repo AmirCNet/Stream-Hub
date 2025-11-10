@@ -52,6 +52,6 @@ namespace StreamHub.Services
             _context.Users.Remove(user);
             _context.SaveChanges();
             return true;
-        }
-    }
+        }
+    }
 }

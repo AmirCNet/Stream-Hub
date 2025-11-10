@@ -6,5 +6,5 @@ public class AccessResultDto
     
     public string? StreamUrl { get; set; }
     
-    public string? SubscriptionStatus { get; set; }
+    public string? SubscriptionStatus { get; set; }
 }

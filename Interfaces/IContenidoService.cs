@@ -10,6 +10,6 @@ namespace StreamHub.Interfaces
         Contenido? GetById(int id);
         Contenido Add(Contenido contenido);
         Contenido? Update(int id, Contenido contenido);
-        bool Delete(int id);
-    }
+        bool Delete(int id);
+    }
 }

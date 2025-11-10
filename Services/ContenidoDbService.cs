@@ -54,6 +54,6 @@ namespace StreamHub.Services
             _context.Content.Remove(contenido);
             _context.SaveChanges();
             return true;
-        }
-    }
+        }
+    }
 }

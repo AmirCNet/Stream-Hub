@@ -23,6 +23,11 @@ namespace StreamHub.Services
             return _context.Subscriptions.Find(id);
         }
 
+        public Suscripcion? GetByUserId(int userId)
+        {
+            return _context.Subscriptions.FirstOrDefault(s => s.UsuarioId == userId);
+        }
+
         public Suscripcion Add(Suscripcion suscripcion)
         {
             suscripcion.FechaInicio = DateTime.Now;
@@ -36,10 +41,10 @@ namespace StreamHub.Services
             var existing = _context.Subscriptions.Find(id);
             if (existing == null) return null;
 
-            existing.TipoSuscripcion = suscripcion.TipoSuscripcion;
-            if (suscripcion.FechaFin != default)
+            existing.Plan = suscripcion.Plan;
+            if (suscripcion.FechaExpiracion.HasValue)
             {
-                existing.FechaFin = suscripcion.FechaFin;
+                existing.FechaExpiracion = suscripcion.FechaExpiracion;
             }
             if (!string.IsNullOrWhiteSpace(suscripcion.Estado))
             {
@@ -47,6 +52,34 @@ namespace StreamHub.Services
             }
             _context.SaveChanges();
 
+            return existing;
+        }
+
+        public Suscripcion UpsertForUser(int userId, Suscripcion data)
+        {
+            var existing = _context.Subscriptions.FirstOrDefault(s => s.UsuarioId == userId);
+            if (existing == null)
+            {
+                var nueva = new Suscripcion
+                {
+                    UsuarioId = userId,
+                    Plan = data.Plan,
+                    FechaInicio = DateTime.UtcNow,
+                    FechaExpiracion = data.FechaExpiracion,
+                    Estado = string.IsNullOrWhiteSpace(data.Estado) ? "Activa" : data.Estado
+                };
+                _context.Subscriptions.Add(nueva);
+                _context.SaveChanges();
+                return nueva;
+            }
+
+            existing.Plan = data.Plan;
+            existing.FechaExpiracion = data.FechaExpiracion;
+            if (!string.IsNullOrWhiteSpace(data.Estado))
+            {
+                existing.Estado = data.Estado;
+            }
+            _context.SaveChanges();
             return existing;
         }
 
@@ -58,6 +91,6 @@ namespace StreamHub.Services
             _context.Subscriptions.Remove(suscripcion);
             _context.SaveChanges();
             return true;
-        }
-    }
+        }
+    }
 }

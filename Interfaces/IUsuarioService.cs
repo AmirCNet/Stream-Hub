@@ -8,6 +8,6 @@ namespace StreamHub.Interfaces
         Usuario? GetById(int id);
         Usuario Add(Usuario usuario);
         Usuario? Update(int id, Usuario usuario);
-        bool Delete(int id);
-    }
+        bool Delete(int id);
+    }
 }

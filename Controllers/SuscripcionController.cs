@@ -38,10 +38,10 @@ public class SuscripcionController : ControllerBase
     {
         var model = new Suscripcion
         {
-            IdUsuario = dto.IdUsuario,
-            TipoSuscripcion = dto.TipoSuscripcion,
+            UsuarioId = dto.UsuarioId,
+            Plan = dto.Plan,
             FechaInicio = DateTime.Now,
-            FechaFin = dto.FechaFin ?? DateTime.Now.AddMonths(1),
+            FechaExpiracion = dto.FechaExpiracion,
             Estado = dto.Estado ?? "Activa"
         };
         var nuevaSuscripcion = _suscripcionService.Add(model);
@@ -53,9 +53,9 @@ public class SuscripcionController : ControllerBase
     {
         var model = new Suscripcion
         {
-            IdUsuario = dto.IdUsuario,
-            TipoSuscripcion = dto.TipoSuscripcion,
-            FechaFin = dto.FechaFin ?? DateTime.Now.AddMonths(1),
+            UsuarioId = dto.UsuarioId,
+            Plan = dto.Plan,
+            FechaExpiracion = dto.FechaExpiracion,
             Estado = dto.Estado
         };
         var updated = _suscripcionService.Update(id, model);
@@ -78,10 +78,10 @@ public class SuscripcionController : ControllerBase
     private static SuscripcionDto MapToDto(Suscripcion s) => new SuscripcionDto
     {
         Id = s.Id,
-        IdUsuario = s.IdUsuario,
-        TipoSuscripcion = s.TipoSuscripcion,
+        UsuarioId = s.UsuarioId,
+        Plan = s.Plan,
         FechaInicio = s.FechaInicio,
-        FechaFin = s.FechaFin,
+        FechaExpiracion = s.FechaExpiracion,
         Estado = s.Estado
-    };
+    };
 }
